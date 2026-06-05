@@ -39,6 +39,6 @@ jobs:
             - name: Instalando Browsers do Playwright
               run: yarn playwright install
             
-            # executar os testes e2e
+            # executar os testes e2es
             - name: Executando testes e2e
               run: yarn run e2e
