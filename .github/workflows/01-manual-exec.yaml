@@ -30,9 +30,6 @@ jobs:
   e2e-tests:
     name: E2E Tests
 
-    # Só executa se o lint passar
-    needs: lint
-
     runs-on: self-hosted
 
     steps:
