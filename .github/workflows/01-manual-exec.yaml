@@ -1,44 +1,55 @@
-# CI de Nível 01 - Disparo Manual através de clique
-
-# nome da pipeline
-name: "Execução Manual"
-
-# gatilhos / triggers - regras de disparo
-# gatilho manual = workflow_dispatch
+name: Execução Manual
 
 on:
-    workflow_dispatch:
-
-#tarefas dentro da pipeline = jobs
+  workflow_dispatch:
 
 jobs:
-    #nome do job
-    e2e-tests:
-        # maquina onde o job vai rodar
-        runs-on: self-hosted
 
-        # passos do job
-        steps:
-            # clone do projeto
-            - uses: actions/checkout@v4
+  lint:
+    name: Lint
+    runs-on: self-hosted
 
-            # instalção do node
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 24.x
+    permissions:
+      contents: read
+      packages: read
+      issues: write
+      pull-requests: write
+      statuses: write
 
-            # instalação do Yarn
-            - name: Instalando Yarn
-              run: npm install -g yarn
-            
-            #   instalação das dependências
-            - name: Instalando dependências
-              run: yarn
-            
-            # instalação dos Browsers do Playwright
-            - name: Instalando Browsers do Playwright
-              run: yarn playwright install
-            
-            # executar os testes e2es
-            - name: Executando testes e2e
-              run: yarn run e2e
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Super-linter
+        uses: super-linter/super-linter@v8.6.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  e2e-tests:
+    name: E2E Tests
+
+    # Só executa se o lint passar
+    needs: lint
+
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      - name: Instalando dependências
+        run: yarn
+
+      - name: Instalando Browsers do Playwright
+        run: yarn playwright install
+
+      - name: Executando testes e2e
+        run: yarn run e2e
