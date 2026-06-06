@@ -1,25 +1,48 @@
 version: 2.1
-orbs:
-  node: circleci/node@5
+
+executors:
+  playwright:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.60.0-noble
 
 jobs:
   e2e-tests:
-    # Instala dependências, browsers do Playwright e executa os testes e2e
-    docker:
-      - image: cimg/node:18.20.0-browsers
+    executor: playwright
+
     steps:
       - checkout
+
+      # Opcional: verificar versões
       - run:
-          name: Install node dependencies
-          command: yarn --frozen-lockfile
+          name: Verificando versões
+          command: |
+            node --version
+            yarn --version
+
+      # Instala dependências
       - run:
-          name: Install Playwright browsers
+          name: Instalando dependências
+          command: yarn
+
+      # Instala browsers do Playwright
+      # (na imagem oficial geralmente não é necessário,
+      # mas pode manter se o projeto exigir)
+      - run:
+          name: Instalando Browsers do Playwright
           command: yarn playwright install
+
+      # Executa os testes
       - run:
-          name: Run e2e tests
+          name: Executando testes e2e
           command: yarn run e2e
 
+      # Salva relatórios caso existam
+      - store_artifacts:
+          path: playwright-report
+
 workflows:
-  build-and-test:
+  version: 2
+
+  e2e-workflow:
     jobs:
       - e2e-tests
