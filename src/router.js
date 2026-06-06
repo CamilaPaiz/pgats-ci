@@ -13,9 +13,6 @@ export class Router {
 
   /** @param {string[]} route */
   navigate(route) {
-    // Intentionally reference an undefined variable to force a tsc error
-    // (useful to make the lint step fail in CI)
-    console.log(FORCE_TSC_ERROR);
     this.#currentRoute = route;
   }
   /** @param {RouteCallback} callback */
