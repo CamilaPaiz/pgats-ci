@@ -1,6 +1,7 @@
 {
   "name": "robo-coasters-example",
   "version": "1.0.0",
+  "packageManager": "yarn@4.16.0",
   "type": "module",
   "description": "An example for Mutation Testing",
   "repository": {
