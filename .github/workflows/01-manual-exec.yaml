@@ -5,8 +5,8 @@ on:
 
 jobs:
 
-  lint:
-    name: Lint
+  jest:
+    name: Jest Check
     runs-on: self-hosted
 
     permissions:
@@ -22,12 +22,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Super-linter
-        uses: super-linter/super-linter@v8.6.0
-        env:
+      - name: jest-check
+        uses: soomo/jest-check@0.0.5
+        with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SAVE_SUPER_LINTER_OUTPUT: false
-          SAVE_SUPER_LINTER_SUMMARY: false
+          JEST_FOLDER: ${{ github.workspace }}/test/components
 
   e2e-tests:
     name: E2E Tests
