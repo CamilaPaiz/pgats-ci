@@ -5,11 +5,13 @@ orbs:
 jobs:
   e2e-tests:
     # Instala dependências, browsers do Playwright e executa os testes e2e
-    executor: node/default
+    docker:
+      - image: cimg/node:18.20.0-browsers
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: yarn
+      - run:
+          name: Install node dependencies
+          command: yarn --frozen-lockfile
       - run:
           name: Install Playwright browsers
           command: yarn playwright install
