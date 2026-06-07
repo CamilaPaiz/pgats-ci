@@ -23,6 +23,21 @@ jobs:
           fetch-depth: 0
           clean: false
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      - name: Instalando dependências
+        run: yarn
+
+      - name: Executando Jest e gerando relatório
+        run: |
+          mkdir -p test/components
+          yarn test --json --outputFile=test/components/output.json
+
       - name: jest-check
         uses: soomo/jest-check@0.0.5
         with:
