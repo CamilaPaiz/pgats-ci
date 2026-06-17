@@ -1,0 +1,78 @@
+name: Execução agendada
+
+on:
+  schedule:
+  # # A sintaxe do cron é composta por cinco campos separados por espaços:  
+  # # * Minuto (0-59)
+  # # * Hora (0-23)
+  # # * Dia do mês (1-31)
+  # # * Mês (1-12)
+  # # * Dia da semana (0-7, onde 0 e 7 representam domingo)
+  # # Exemplo: '0 0 * * *' - Executa todos os dias à meia-noite
+    - cron: '40 20 17 06 3' # Executa às 20:40 do dia 17 de junho, se for uma quarta-feira (3 representa quarta-feira)
+
+jobs:
+
+  jest:
+    name: Jest Check
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      issues: write
+      pull-requests: write
+      statuses: write
+      checks: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          clean: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      - name: Instalando dependências
+        run: yarn
+
+      - name: Executando Jest e gerando relatório
+        run: |
+          mkdir -p test/components
+          yarn test --json --outputFile=test/components/output.json
+
+      - name: jest-check
+        uses: soomo/jest-check@0.0.5
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JEST_FOLDER: ${{ github.workspace }}/test/components
+
+  e2e-tests:
+    name: E2E Tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+
+      - name: Instalando Yarn
+        run: npm install -g yarn
+
+      - name: Instalando dependências
+        run: yarn
+
+      - name: Instalando Browsers do Playwright
+        run: yarn playwright install
+
+      - name: Executando testes e2e
+        run: yarn run e2e
