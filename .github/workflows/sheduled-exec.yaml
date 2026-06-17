@@ -10,6 +10,7 @@ on:
   # # * Dia da semana (0-7, onde 0 e 7 representam domingo)
   # # Exemplo: '0 0 * * *' - Executa todos os dias à meia-noite
     - cron: '40 20 17 06 3' # Executa às 20:40 do dia 17 de junho, se for uma quarta-feira (3 representa quarta-feira)
+    - timezone: 'America/Sao_Paulo'
 
 jobs:
 
